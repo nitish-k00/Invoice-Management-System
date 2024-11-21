@@ -44,7 +44,7 @@ function CreateForm({ onSubmit }) {
     };
 
     try {
-      await axios.put("http://localhost:8000/api/invoices/createUpdate", {
+      await axios.put("https://invoice-management-system-server.onrender.com/api/invoices/createUpdate", {
         invoiceData,
       });
       onSubmit();
