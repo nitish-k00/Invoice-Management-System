@@ -18,7 +18,7 @@ function Single_Invoice() {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `http://localhost:8000/api/invoices/single_invoice/${id}`
+        `https://invoice-management-system-server.onrender.com/api/invoices/single_invoice/${id}`
       );
       setInvoice(data.invoices); // Assuming the API response contains `invoices`
     } catch (error) {
@@ -35,7 +35,7 @@ function Single_Invoice() {
   // Handle delete
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/invoices/delete/${id}`);
+      await axios.delete(`https://invoice-management-system-server.onrender.com/api/invoices/delete/${id}`);
       message.success("Invoice deleted successfully.");
       navigate("/");
     } catch (error) {
@@ -65,7 +65,7 @@ function Single_Invoice() {
         })),
       };
 
-      await axios.put("http://localhost:8000/api/invoices/createUpdate", {
+      await axios.put("https://invoice-management-system-server.onrender.com/api/invoices/createUpdate", {
         invoiceData: updatedInvoiceData,
       });
 
