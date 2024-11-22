@@ -61,7 +61,9 @@ const create_update = async (req, res) => {
         new_Invoice.details.push(new_Invoice_Detail._id);
       }
       await new_Invoice.save();
-      res.status(200).json("New invoice created successfully.");
+      res
+        .status(200)
+        .json({ message: "New invoice created successfully.", new_Invoice });
     }
   } catch (error) {
     res.status(500).json(error);
@@ -102,8 +104,7 @@ const get_invoice = async (req, res) => {
     const invoices = await invoice_Model
       .find()
       .skip((page - 1) * limit)
-      .limit(limit)
-      .populate("details");
+      .limit(limit);
 
     const total_Document = await invoice_Model.countDocuments();
 
