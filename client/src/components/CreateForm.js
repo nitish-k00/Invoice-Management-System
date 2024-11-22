@@ -53,7 +53,7 @@ function CreateForm({
     try {
       setLoading(true);
       const { data } = await axios.put(
-        "http://localhost:8000/api/invoices/createUpdate",
+        "https://invoice-management-system-server.onrender.com/api/invoices/createUpdate",
         {
           invoiceData,
         }
