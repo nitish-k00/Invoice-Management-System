@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { Modal, Button, Form, Input, InputNumber, message } from "antd";
+import { Modal, Button, Form, Input, InputNumber, message, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import "../styles/SingleInvoice.css";
 function Single_Invoice() {
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [form] = Form.useForm();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,11 +20,11 @@ function Single_Invoice() {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `https://invoice-management-system-server.onrender.com/api/invoices/single_invoice/${id}`
+        `http://localhost:8000/api/invoices/single_invoice/${id}`
       );
-      setInvoice(data.invoices); // Assuming the API response contains `invoices`
+      setInvoice(data.invoices);
     } catch (error) {
-      message.error("Error fetching invoice: " + error.message); // Show error message
+      message.error("Error fetching invoice: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -34,12 +36,15 @@ function Single_Invoice() {
 
   // Handle delete
   const handleDelete = async () => {
+    setIsDeleteLoading(true);
     try {
-      await axios.delete(`https://invoice-management-system-server.onrender.com/api/invoices/delete/${id}`);
+      await axios.delete(`http://localhost:8000/api/invoices/delete/${id}`);
       message.success("Invoice deleted successfully.");
       navigate("/");
     } catch (error) {
       message.error("Error deleting invoice: " + error.message);
+    } finally {
+      setIsDeleteLoading(false);
     }
   };
 
@@ -56,6 +61,7 @@ function Single_Invoice() {
 
   // Handle form submit
   const handleSubmit = async (invoiceData) => {
+    setIsSubmitLoading(true);
     try {
       const updatedInvoiceData = {
         ...invoiceData,
@@ -65,7 +71,7 @@ function Single_Invoice() {
         })),
       };
 
-      await axios.put("https://invoice-management-system-server.onrender.com/api/invoices/createUpdate", {
+      await axios.put("http://localhost:8000/api/invoices/createUpdate", {
         invoiceData: updatedInvoiceData,
       });
 
@@ -74,16 +80,16 @@ function Single_Invoice() {
       get_invoice_api();
     } catch (error) {
       message.error("Error updating invoice: " + error.message);
+    } finally {
+      setIsSubmitLoading(false);
     }
   };
 
   // Loading state
   if (loading) {
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="loading-container">
+        <Spin size="large" />
       </div>
     );
   }
@@ -97,11 +103,11 @@ function Single_Invoice() {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 fade-in">
       <div className="card shadow-sm">
         <div className="card-body">
-          <h1 className="card-title text-primary text-center">
-            Invoice Details
+          <h1 className="card-title text-primary text-center animate__animated animate__fadeIn">
+            INVOICE DETAILS
           </h1>
           <hr />
           <div className="row mb-4">
@@ -157,13 +163,19 @@ function Single_Invoice() {
       </div>
 
       <div className="mt-3 mb-5 d-flex justify-content-center flex-column flex-sm-row">
-        <Button type="primary" onClick={handleEdit} className="mb-2 mb-sm-0">
+        <Button
+          type="primary"
+          onClick={handleEdit}
+          className="mb-2 mb-sm-0 animate__animated animate__fadeIn"
+          disabled={isSubmitLoading}
+        >
           Edit
         </Button>
         <Button
           type="primary"
-          className="ms-sm-3 bg-danger"
+          className="ms-sm-3 bg-danger animate__animated animate__fadeIn"
           onClick={handleDelete}
+          loading={isDeleteLoading}
         >
           Delete
         </Button>
@@ -276,7 +288,7 @@ function Single_Invoice() {
             )}
           </Form.List>
           <div className="text-center">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isSubmitLoading}>
               Save Changes
             </Button>
           </div>
