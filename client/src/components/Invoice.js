@@ -22,7 +22,7 @@ function Invoice() {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `http://localhost:8000/api/invoices/get?page=${page}`
+        `https://invoice-management-system-server.onrender.com/api/invoices/get?page=${page}`
       );
       setInvoices(data.data);
       setOriginalInvoices(data.data);
