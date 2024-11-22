@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
-function CreateForm({ onSubmit }) {
+function CreateForm({
+  setInvoices,
+  setOriginalInvoices,
+  invoices,
+  originalInvoices,
+  setIsModalVisible,
+}) {
   const [invoiceNumber, setInvoiceNumber] = useState("");
+  const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [date, setDate] = useState("");
   const [details, setDetails] = useState([
@@ -44,16 +51,22 @@ function CreateForm({ onSubmit }) {
     };
 
     try {
-      await axios.put("https://invoice-management-system-server.onrender.com/api/invoices/createUpdate", {
-        invoiceData,
-      });
-      onSubmit();
+      setLoading(true);
+      const { data } = await axios.put(
+        "http://localhost:8000/api/invoices/createUpdate",
+        {
+          invoiceData,
+        }
+      );
+
+      setInvoices([...invoices, data.new_Invoice]);
+      setOriginalInvoices([...originalInvoices, data.new_Invoice]);
+      setIsModalVisible(false);
+      setLoading(false);
     } catch (error) {
       console.error("Error creating invoice:", error);
-      // Add user feedback here, e.g., an error toast or message
+      setLoading(false);
     }
-
-    console.log("Invoice Data: ", invoiceData);
   };
 
   return (
@@ -171,8 +184,23 @@ function CreateForm({ onSubmit }) {
 
         {/* Submit Button */}
         <div className="form-group mt-4">
-          <button type="submit" className="btn btn-success w-100">
-            Create Invoice
+          <button
+            type="submit"
+            className="btn btn-success w-100"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Creating...
+              </>
+            ) : (
+              "Create Invoice"
+            )}
           </button>
         </div>
       </form>
