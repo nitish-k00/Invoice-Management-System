@@ -4,6 +4,7 @@ import { Modal } from "antd";
 import CreateForm from "./CreateForm";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
+import "../styles/Invoice.css";
 
 function Invoice() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function Invoice() {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `https://invoice-management-system-server.onrender.com/api/invoices/get?page=${page}`
+        `http://localhost:8000/api/invoices/get?page=${page}`
       );
       setInvoices(data.data);
       setOriginalInvoices(data.data);
@@ -65,15 +66,10 @@ function Invoice() {
     setInvoices(originalInvoices);
   };
 
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-    get_all_invoice_api(currentPage); // Refresh invoices after modal is closed
-  };
-
   return (
     <div className="container mt-4">
       {/* Title Row */}
-      <div className="row">
+      <div className="row fade-in">
         <div className="col text-center">
           <h1 className="display-4 text-uppercase text-primary">Invoices</h1>
           <p className="text-muted">Browse all invoices with ease</p>
@@ -81,10 +77,10 @@ function Invoice() {
       </div>
 
       {/* Create, Search, and Date Filter Row */}
-      <div className="row mt-4 g-3">
+      <div className="row mt-4 g-3 fade-in">
         <div className="col-md-3">
           <button
-            className="btn btn-success w-100"
+            className="btn btn-success w-100 btn-hover"
             onClick={() => setIsModalVisible(true)}
           >
             Create Invoice
@@ -105,7 +101,6 @@ function Invoice() {
             className="form-control"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            placeholder="Start Date"
           />
         </div>
         <div className="col-md-2">
@@ -114,15 +109,17 @@ function Invoice() {
             className="form-control"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            placeholder="End Date"
           />
         </div>
         <div className="col-md-2">
-          <button className="btn btn-primary w-100" onClick={handleSearch}>
+          <button
+            className="btn btn-primary w-100 btn-hover"
+            onClick={handleSearch}
+          >
             Search
           </button>
           <button
-            className="btn btn-outline-secondary w-100 mt-2"
+            className="btn btn-outline-secondary w-100 mt-2 btn-hover"
             onClick={resetFilters}
           >
             Reset
@@ -132,7 +129,7 @@ function Invoice() {
 
       {/* Loading Spinner */}
       {loading ? (
-        <div className="row mt-4">
+        <div className="row mt-4 fade-in">
           <div className="col text-center">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
@@ -143,7 +140,7 @@ function Invoice() {
       ) : (
         <>
           {/* Invoice Cards */}
-          <div className="row mt-4 g-3">
+          <div className="row mt-4 g-3 fade-in">
             {invoices.map((data) => (
               <div
                 key={data.invoice_number}
@@ -152,7 +149,7 @@ function Invoice() {
                 style={{ cursor: "pointer" }}
               >
                 <div
-                  className="card shadow-sm"
+                  className="card shadow-sm card-hover"
                   style={{
                     borderRadius: "15px",
                     width: "100%",
@@ -180,7 +177,7 @@ function Invoice() {
           </div>
 
           {/* Pagination Row */}
-          <div className="row mt-5">
+          <div className="row mt-5 fade-in">
             <div className="col d-flex justify-content-center">
               <nav>
                 <ul className="pagination">
@@ -191,7 +188,7 @@ function Invoice() {
                     <li
                       key={page}
                       className={`page-item ${
-                        page === currentPage ? "active" : ""
+                        page === currentPage ? "active page-item-active" : ""
                       }`}
                     >
                       <button
@@ -206,17 +203,26 @@ function Invoice() {
                 </ul>
               </nav>
             </div>
-            <Modal
-              title="Create New Invoice"
-              visible={isModalVisible}
-              onCancel={() => setIsModalVisible(false)}
-              footer={null}
-            >
-              <CreateForm onSubmit={handleModalClose} />
-            </Modal>
           </div>
         </>
       )}
+
+      {/* Create Invoice Modal */}
+      <Modal
+        title="Create New Invoice"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        className="fade-in"
+      >
+        <CreateForm
+          setInvoices={setInvoices}
+          setOriginalInvoices={setOriginalInvoices}
+          invoices={invoices}
+          originalInvoices={originalInvoices}
+          setIsModalVisible={setIsModalVisible}
+        />
+      </Modal>
     </div>
   );
 }
