@@ -1,6 +1,6 @@
 # Full-Stack Invoice Management System
 
-This project implements a full-stack invoice management system with MERN REST Framework for the backend and React for the frontend. The system allows creating, managing, and deleting invoices with multiple line items through a single API endpoint. It includes essential features such as pagination, search, and form validation.
+This project implements a full-stack invoice management system with MERN REST Framework for the backend and React for the frontend. The system allows creating, managing, and deleting invoices with multiple line items through a single API endpoint. It includes essential features such as pagination, search, and form validation and it was developed for Neurodynamis Assessment.
 
 - [Features](#features)
 - [Demo](#demo)
